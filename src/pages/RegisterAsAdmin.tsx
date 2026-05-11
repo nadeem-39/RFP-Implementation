@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import z, { string } from "zod";
+import z from "zod";
 import instance from "../lib/api";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -9,28 +9,16 @@ import { useNavigate } from "react-router-dom";
 
 const schema = z
   .object({
-    firstName: z.string().min(3, "Enter minimum 3 characters"),
-    lastName: z.string().min(3, "Enter minimum 3 characters"),
+    firstname: z.string().min(3, "Enter minimum 3 characters"),
+    lastname: z.string().min(3, "Enter minimum 3 characters"),
     email: z.string().email(),
     password: z.string().min(8, "Enter minimum 8 digit password"),
     confirmPassword: z.string(),
-    revenue: z.number({
-      error: (issue) =>
-        issue.code === "invalid_type" ? "Enter revenue properly" : "",
-    }),
-    noOfEmployees: z.number({
-      error: (issue) =>
-        issue.code === "invalid_type" ? "Enter no of employees properly" : "",
-    }),
-    gstNo: z.string().length(15, "GST No should have 15 characters"),
-    panNo: z.string().length(10, "PAN No should have 10 characters"),
-    phoneNo: z.number({
+
+    mobile: z.number({
       error: (issue) =>
         issue.code === "invalid_type" ? "Enter Phone number properly" : "",
     }),
-    categories: z
-      .array(string())
-      .nonempty({ error: "Select at least one category" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -39,7 +27,7 @@ const schema = z
 
 type formSchema = z.infer<typeof schema>;
 // Register as vendor
-const RegisterASVendor = (): ReactElement => {
+const RegisterAsAdmin = (): ReactElement => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState, getFieldState } =
     useForm<formSchema>({
@@ -50,14 +38,15 @@ const RegisterASVendor = (): ReactElement => {
   const onSubmit: SubmitHandler<formSchema> = async (data: formSchema) => {
     try {
       const res = await instance({
-        url: "/registervendor",
+        url: "/registeradmin",
         method: "post",
         data,
       });
+
       if (res?.data?.response === "success") {
         navigate("/login");
         toast("Successfully registered");
-      } else toast(res?.data?.error);
+      } else toast(res?.data?.error[0]);
     } catch (error) {
       toast(error.message);
     }
@@ -80,7 +69,7 @@ const RegisterASVendor = (): ReactElement => {
                     <div className="col-12">
                       <div className="text-primary p-4">
                         <h5 className="text-primary">Welcome to RFP System!</h5>
-                        <p>Regsiter as Vendor</p>
+                        <p>Regsiter as Admin</p>
                       </div>
                     </div>
                   </div>
@@ -98,14 +87,14 @@ const RegisterASVendor = (): ReactElement => {
                             <input
                               type="text"
                               className="form-control"
-                              id="firstName"
-                              {...register("firstName")}
-                              placeholder="Enter Firstname"
+                              id="firstname"
+                              {...register("firstname")}
+                              placeholder="Enter firstname"
                             />
-                            {(formState.errors.firstName ||
-                              getFieldState("firstName").invalid) && (
+                            {(formState.errors.firstname ||
+                              getFieldState("firstname").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.firstName?.message ||
+                                {formState.errors?.firstname?.message ||
                                   "Enter Valid First Name"}
                               </p>
                             )}
@@ -120,13 +109,13 @@ const RegisterASVendor = (): ReactElement => {
                               type="text"
                               className="form-control"
                               id="lastname"
-                              {...register("lastName")}
-                              placeholder="Enter Lastname"
+                              {...register("lastname")}
+                              placeholder="Enter lastname"
                             />
-                            {(formState.errors.lastName ||
-                              getFieldState("lastName").invalid) && (
+                            {(formState.errors.lastname ||
+                              getFieldState("lastname").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.lastName?.message ||
+                                {formState.errors?.lastname?.message ||
                                   "Enter Valid Last Name"}
                               </p>
                             )}
@@ -193,132 +182,21 @@ const RegisterASVendor = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="revenue">
-                              Revenue (Last 3 Years in Lacks)*
-                            </label>
-                            <input
-                              type="number"
-                              className="form-control"
-                              id="revenue"
-                              {...register("revenue", {
-                                valueAsNumber: true,
-                              })}
-                              placeholder="Enter Revenue"
-                            />
-                            {(formState.errors.revenue ||
-                              getFieldState("revenue").invalid) && (
-                              <p className="text-danger">
-                                {formState.errors?.revenue?.message ||
-                                  "Enter Valid revenue"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="col-md-12 col-lg-6 col-xl-6">
-                          <div className="form-group">
-                            <label htmlFor="noofemployees">
-                              No of Employees*
-                            </label>
-                            <input
-                              type="number"
-                              className="form-control"
-                              id="noOfEmployees"
-                              {...register("noOfEmployees", {
-                                valueAsNumber: true,
-                              })}
-                              placeholder="No of Employees"
-                            />
-                            {(formState.errors.noOfEmployees ||
-                              getFieldState("noOfEmployees").invalid) && (
-                              <p className="text-danger">
-                                {formState.errors?.noOfEmployees?.message ||
-                                  "Enter Valid noOfEmployees"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="col-md-12 col-lg-6 col-xl-6">
-                          <div className="form-group">
-                            <label htmlFor="gstno">GST No*</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="gstNo"
-                              {...register("gstNo")}
-                              placeholder="Enter GST No"
-                            />
-                            {(formState.errors.gstNo ||
-                              getFieldState("gstNo").invalid) && (
-                              <p className="text-danger">
-                                {formState.errors?.gstNo?.message ||
-                                  "Enter Valid gstNo"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="col-md-12 col-lg-6 col-xl-6">
-                          <div className="form-group">
-                            <label htmlFor="panno">PAN No*</label>
-                            <input
-                              type="text"
-                              className="form-control"
-                              id="panNo"
-                              {...register("panNo")}
-                              placeholder="Enter PAN No"
-                            />
-                            {(formState.errors.panNo ||
-                              getFieldState("panNo").invalid) && (
-                              <p className="text-danger">
-                                {formState.errors?.panNo?.message ||
-                                  "Enter Valid panNo"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="col-md-12 col-lg-6 col-xl-6">
-                          <div className="form-group">
                             <label htmlFor="revenue">Phone No*</label>
                             <input
                               type="number"
                               className="form-control"
-                              id="phoneNo"
-                              {...register("phoneNo", {
+                              id="mobile"
+                              {...register("mobile", {
                                 valueAsNumber: true,
                               })}
                               placeholder="Enter Phone No"
                             />
-                            {(formState.errors.phoneNo ||
-                              getFieldState("phoneNo").invalid) && (
+                            {(formState.errors.mobile ||
+                              getFieldState("mobile").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.phoneNo?.message ||
-                                  "Enter Valid phoneNo"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="col-md-12 col-lg-6 col-xl-6">
-                          <div className="form-group">
-                            <label htmlFor="Categories">Categories*</label>
-                            <select
-                              className="form-control"
-                              multiple
-                              id="categories"
-                              {...register("categories")}
-                              name="Categories"
-                            >
-                              <option value="">All Categories</option>
-                              <option value="1">Software</option>
-                              <option value="2">Hardware</option>
-                              <option value="3">Office Furniture</option>
-                              <option value="4">Stationery</option>
-                            </select>
-                            {(formState.errors.categories ||
-                              getFieldState("categories").invalid) && (
-                              <p className="text-danger">
-                                {formState.errors?.categories?.message ||
-                                  "Select Valid categories"}
+                                {formState.errors?.mobile?.message ||
+                                  "Enter Valid mobile"}
                               </p>
                             )}
                           </div>
@@ -353,4 +231,4 @@ const RegisterASVendor = (): ReactElement => {
   );
 };
 
-export default RegisterASVendor;
+export default RegisterAsAdmin;

@@ -1,14 +1,14 @@
-import instance from "../lib/api";
+import instance from "../../lib/api";
 import z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import type { ReactElement } from "react";
-
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 const schema = z.object({
-  email: z.string().email(),
+  name: z.string().min(2, "Enter at least two characters"),
 });
 
 // type responseType = {
@@ -23,8 +23,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 // forget password page
-const ForgetPass = (): ReactElement => {
+export const AddCategory = (): ReactElement => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState, getFieldState } =
     useForm<FormData>({
@@ -35,14 +36,17 @@ const ForgetPass = (): ReactElement => {
   const onSubmit = async (data: FormData) => {
     try {
       const res = await instance({
-        url: "/forgetPassword",
+        url: "/categories",
         method: "post",
         data,
       });
+      console.log(res);
+
       if (res?.data?.response === "success") {
-        toast("Successfully sent OTP to registered mail Id");
-        navigate("/resetPassword");
-      } else toast(res?.data?.error);
+        toast("Successfully Added Category as " + data.name);
+        navigate("/admin/categories");
+        queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      } else toast(res?.data?.errors);
     } catch (error) {
       toast(error.message);
     }
@@ -64,8 +68,10 @@ const ForgetPass = (): ReactElement => {
                   <div className="row">
                     <div className="col-12">
                       <div className="text-primary p-4">
-                        <h5 className="text-primary">Welcome to RFP System!</h5>
-                        <p>Forget Password</p>
+                        <h5 className="text-primary">
+                          Admin Category Creation Form
+                        </h5>
+                        <p>Enter Category Name Below</p>
                       </div>
                     </div>
                   </div>
@@ -77,18 +83,18 @@ const ForgetPass = (): ReactElement => {
                       onSubmit={handleSubmit(onSubmit)}
                     >
                       <div className="form-group">
-                        <label htmlFor="username">Email</label>
+                        <label htmlFor="username">Category Name</label>
 
                         <input
-                          id="email"
-                          {...register("email")}
-                          placeholder="Enter Email"
+                          id="name"
+                          {...register("name")}
+                          placeholder="Enter Category Name"
                           className="form-control"
                         ></input>
-                        {(formState.errors.email ||
-                          getFieldState("email").invalid) && (
+                        {(formState.errors.name ||
+                          getFieldState("name").invalid) && (
                           <p className="text-danger">
-                            {formState.errors?.email?.message ||
+                            {formState.errors?.name?.message ||
                               "Enter Valid Email"}
                           </p>
                         )}
@@ -99,19 +105,11 @@ const ForgetPass = (): ReactElement => {
                           className="btn btn-primary btn-block waves-effect waves-light"
                           type="submit"
                         >
-                          Get OTP
+                          Submit
                         </button>
                       </div>
                     </form>
                   </div>
-                </div>
-              </div>
-              <div className="mt-5 text-center">
-                <div>
-                  <p>
-                    &copy; Copyright{" "}
-                    <i className="mdi mdi-heart text-danger"></i> RFP System
-                  </p>
                 </div>
               </div>
             </div>
@@ -121,5 +119,3 @@ const ForgetPass = (): ReactElement => {
     </div>
   );
 };
-
-export default ForgetPass;

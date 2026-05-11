@@ -1,4 +1,5 @@
 // src/store/authStore.ts
+
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -8,13 +9,11 @@ type User = {
   name: string;
   email: string;
 };
-let accessToken: string | null = null;
-
-export const getAccessToken = () => accessToken;
 
 type AuthState = {
   user: User | null;
   isAuthenticated: boolean;
+  token: string;
   login: (user: User, token: string) => void;
   logout: () => void;
 };
@@ -24,15 +23,14 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       isAuthenticated: false,
+      token: null,
 
       login: (user, token) => {
-        accessToken = token;
-        set({ user, isAuthenticated: true });
+        set({ user, isAuthenticated: true, token: token });
       },
 
       logout: () => {
-        accessToken = null;
-        set({ user: null, isAuthenticated: false });
+        set({ user: null, isAuthenticated: false, token: null });
       },
     }),
     {
@@ -40,6 +38,7 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         isAuthenticated: state.isAuthenticated,
+        token: state.token,
       }),
     },
   ),

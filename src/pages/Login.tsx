@@ -6,26 +6,28 @@ import { useAuthStore } from "../lib/authStore";
 import { toast } from "react-toastify";
 import type { ReactElement } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(4, "Enter minimum 4 digit password"),
 });
 
-type responseType = {
-  response: string;
-  user_id: number;
-  type: string;
-  name: string;
-  email: string;
-  token: string;
-};
+// type responseType = {
+//   response: string;
+//   user_id: number;
+//   type: string;
+//   name: string;
+//   email: string;
+//   token: string;
+// };
 
 type FormData = z.infer<typeof schema>;
 
 // login page
 const Login = (): ReactElement => {
   const login = useAuthStore((s) => s.login);
+  const navigate = useNavigate();
 
   const { register, handleSubmit, formState, getFieldState } =
     useForm<FormData>({
@@ -40,8 +42,21 @@ const Login = (): ReactElement => {
         method: "post",
         data,
       });
-      if (res?.data?.response == "success") toast("Successfully login");
-      else toast(res?.data?.error);
+      if (res?.data?.response === "success") {
+        login(
+          {
+            name: res?.data?.name,
+            user_id: res?.data?.user_id,
+            email: res?.data?.email,
+            type: res?.data?.type,
+          },
+          res?.data?.token,
+        );
+
+        toast("Successfully login");
+        if (res?.data?.type === "admin") navigate("/admin/home");
+        else navigate("/vendor/home");
+      } else toast(res?.data?.error);
     } catch (error) {
       toast(error.message);
     }
@@ -164,11 +179,18 @@ const Login = (): ReactElement => {
                         </ul>
                       </div>
                       <div className="mt-4 text-center">
+                        <Link to="/registerAdmin" className="text-muted">
+                          <i className="mdi mdi-lock mr-1"></i> Register as
+                          Admin
+                        </Link>
+                      </div>
+                      <div className="mt-4 text-center">
                         <Link to="/registerVendor" className="text-muted">
                           <i className="mdi mdi-lock mr-1"></i> Register as
                           Vendor
                         </Link>
                       </div>
+
                       <div className="mt-4 text-center">
                         <Link to="/forgotPassword" className="text-muted">
                           <i className="mdi mdi-lock mr-1"></i> Forgot your

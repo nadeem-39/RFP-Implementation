@@ -1,40 +1,40 @@
 import type { ReactElement } from "react";
-import z, { string } from "zod";
-import instance from "../lib/api";
+import z from "zod";
+import instance from "../../lib/api";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 
-const schema = z
-  .object({
-    firstname: z.string().min(3, "Enter minimum 3 characters"),
-    lastname: z.string().min(3, "Enter minimum 3 characters"),
-    email: z.string().email(),
-    password: z.string().min(8, "Enter minimum 8 digit password"),
-    confirmPassword: z.string(),
-    revenue: z.string().nonempty({ message: "Enter Revenue" }),
-    no_of_employees: z.number({
-      error: (issue) =>
-        issue.code === "invalid_type" ? "Enter no of employees properly" : "",
-    }),
-    gst_no: z.string().length(15, "GST No should have 15 characters"),
-    pancard_no: z.string().length(10, "PAN No should have 10 characters"),
-    mobile: z.number({
-      error: (issue) =>
-        issue.code === "invalid_type" ? "Enter Phone number properly" : "",
-    }),
-    category: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+const schema = z.object({
+  user_id: z.number({
+    error: (issue) =>
+      issue.code === "invalid_type" ? "Enter user Id properly" : "",
+  }),
+  item_name: z.string().min(3, "Enter minimum 3 characters"),
+  rfp_no: z.string().nonempty({ error: "can not be empty" }),
+  quantity: z.number({
+    error: (issue) =>
+      issue.code === "invalid_type" ? "Enter Quantity properly" : "",
+  }),
+  last_date: z.date().nonoptional({ error: "Can not empty" }),
+  minimum_price: z.number({
+    error: (issue) =>
+      issue.code === "invalid_type" ? "Enter minimum price" : "",
+  }),
+  maximum_price: z.number({
+    error: (issue) =>
+      issue.code === "invalid_type" ? "Enter maximum price" : "",
+  }),
+  categories: z.string().nonoptional({ error: "Select Category" }),
+  vendors: z.string().nonoptional({ error: "Select vendors" }),
+  item_description: z.string().nonoptional({ error: "Enter item description" }),
+});
 
 type formSchema = z.infer<typeof schema>;
 // Register as vendor
-const RegisterASVendor = (): ReactElement => {
+export const AddRFP = (): ReactElement => {
   const navigate = useNavigate();
   const { register, handleSubmit, formState, getFieldState } =
     useForm<formSchema>({
@@ -93,59 +93,82 @@ const RegisterASVendor = (): ReactElement => {
                       <div className="row">
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="firstname">First name*</label>
+                            <label htmlFor="user_id">User ID*</label>
                             <input
-                              type="text"
+                              type="number"
                               className="form-control"
-                              id="firstname"
-                              {...register("firstname")}
-                              placeholder="Enter firstname"
+                              id="user_id"
+                              {...register("user_id", {
+                                valueAsNumber: true,
+                              })}
+                              placeholder="Enter user id"
                             />
-                            {(formState.errors.firstname ||
-                              getFieldState("firstname").invalid) && (
+                            {(formState.errors.user_id ||
+                              getFieldState("user_id").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.firstname?.message ||
-                                  "Enter Valid First Name"}
+                                {formState.errors?.user_id?.message ||
+                                  "Enter Valid User_id"}
                               </p>
                             )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="lastname">
-                              Last Name<em>*</em>
+                            <label htmlFor="item_name">
+                              Item Name<em>*</em>
                             </label>
                             <input
                               type="text"
                               className="form-control"
-                              id="lastname"
-                              {...register("lastname")}
-                              placeholder="Enter lastname"
+                              id="item_name"
+                              {...register("item_name")}
+                              placeholder="Enter item name"
                             />
-                            {(formState.errors.lastname ||
-                              getFieldState("lastname").invalid) && (
+                            {(formState.errors.item_name ||
+                              getFieldState("item_name").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.lastname?.message ||
-                                  "Enter Valid Last Name"}
+                                {formState.errors?.item_name?.message ||
+                                  "Enter Valid Item Name"}
                               </p>
                             )}
                           </div>
                         </div>
                         <div className="col-md-12">
                           <div className="form-group">
-                            <label htmlFor="email">Email*</label>
+                            <label htmlFor="rfp_no">RFP No.*</label>
                             <input
                               type="text"
                               className="form-control"
-                              id="email"
-                              {...register("email")}
-                              placeholder="Enter Email"
+                              id="rfp_no"
+                              {...register("rfp_no")}
+                              placeholder="Enter RFP No."
                             />
-                            {(formState.errors.email ||
-                              getFieldState("email").invalid) && (
+                            {(formState.errors.rfp_no ||
+                              getFieldState("rfp_no").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.email?.message ||
-                                  "Enter Valid Email"}
+                                {formState.errors?.rfp_no?.message ||
+                                  "Enter Valid RFP No."}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-12 col-lg-6 col-xl-6">
+                          <div className="form-group">
+                            <label htmlFor="quantity">Quantity*</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              id="quantity"
+                              {...register("quantity", {
+                                valueAsNumber: true,
+                              })}
+                              placeholder="Enter Quantity"
+                            />
+                            {(formState.errors.quantity ||
+                              getFieldState("quantity").invalid) && (
+                              <p className="text-danger">
+                                {formState.errors?.quantity?.message ||
+                                  "Enter Valid quantity"}
                               </p>
                             )}
                           </div>
@@ -153,19 +176,63 @@ const RegisterASVendor = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="password">Password*</label>
+                            <label htmlFor="last_date">Last Date*</label>
                             <input
-                              type="password"
+                              type="date"
                               className="form-control"
-                              id="password"
-                              {...register("password")}
-                              placeholder="Enter Password"
+                              id="last_date"
+                              {...register("last_date")}
+                              placeholder="Enter last date"
                             />
-                            {(formState.errors.password ||
-                              getFieldState("password").invalid) && (
+                            {(formState.errors.last_date ||
+                              getFieldState("last_date").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.password?.message ||
-                                  "Enter Valid Password"}
+                                {formState.errors?.last_date?.message ||
+                                  "Enter Valid Date"}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-12 col-lg-6 col-xl-6">
+                          <div className="form-group">
+                            <label htmlFor="minimum_price">
+                              Minimum Price*
+                            </label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              id="quantity"
+                              {...register("quantity", {
+                                valueAsNumber: true,
+                              })}
+                              placeholder="Enter Quantity"
+                            />
+                            {(formState.errors.quantity ||
+                              getFieldState("quantity").invalid) && (
+                              <p className="text-danger">
+                                {formState.errors?.quantity?.message ||
+                                  "Enter Valid quantity"}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                        <div className="col-md-12 col-lg-6 col-xl-6">
+                          <div className="form-group">
+                            <label htmlFor="quantity">Quantity*</label>
+                            <input
+                              type="number"
+                              className="form-control"
+                              id="quantity"
+                              {...register("quantity", {
+                                valueAsNumber: true,
+                              })}
+                              placeholder="Enter Quantity"
+                            />
+                            {(formState.errors.quantity ||
+                              getFieldState("quantity").invalid) && (
+                              <p className="text-danger">
+                                {formState.errors?.quantity?.message ||
+                                  "Enter Valid quantity"}
                               </p>
                             )}
                           </div>
@@ -347,5 +414,3 @@ const RegisterASVendor = (): ReactElement => {
     </>
   );
 };
-
-export default RegisterASVendor;

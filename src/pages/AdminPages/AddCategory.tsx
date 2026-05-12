@@ -46,7 +46,7 @@ export const AddCategory = (): ReactElement => {
         toast("Successfully Added Category as " + data.name);
         navigate("/admin/categories");
         queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
-      } else toast(res?.data?.errors);
+      } else toast("Error " + res?.data?.error);
     } catch (error) {
       toast(error.message);
     }

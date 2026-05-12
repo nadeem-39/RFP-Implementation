@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import instance from "../../lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 type category = {
   id: number;
@@ -32,6 +33,11 @@ export const AdminCategories = () => {
   }
 
   useEffect(() => {
+    if (data?.data?.error) {
+      setCurrCategories(null);
+      toast("Error " + data?.data?.error);
+      return;
+    }
     if (data) {
       setAllCategories(Object.values(data?.data?.categories));
       pagination(currPage, Object.values(data?.data?.categories));
@@ -151,7 +157,7 @@ export const AdminCategories = () => {
                       >
                         <ul className="pagination">
                           <li
-                            className="paginate_button page-item previous "
+                            className={`paginate_button page-item  ${currPage === 1 && "disabled"} `}
                             id="datatable_previous"
                           >
                             <button

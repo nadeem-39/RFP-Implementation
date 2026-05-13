@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-export const SideBar = () => {
+export const Sidebar = () => {
   return (
     <>
       {/* <!-- ========== Left Sidebar Start ========== --> */}
@@ -17,22 +17,9 @@ export const SideBar = () => {
                 </Link>
               </li>
               <li>
-                <Link to={"/admin/vendors-list"} className="waves-effect">
-                  <i className="mdi mdi-receipt"></i>
-                  <span>Vendors</span>
-                </Link>
-              </li>
-              <li>
-                <Link to={"/admin/rfps-list"} className="waves-effect">
+                <Link to={"/vendor/rfps-list"} className="waves-effect">
                   <i className="mdi mdi-flip-vertical"></i>
                   <span>RFP Lists</span>
-                </Link>
-              </li>
-
-              <li>
-                <Link to={"/admin/categories"} className="waves-effect">
-                  <i className="mdi mdi-weather-night"></i>
-                  <span>Categories</span>
                 </Link>
               </li>
             </ul>

@@ -11,7 +11,6 @@ const schema = z.object({
   name: z.string().min(2, "Enter at least two characters"),
 });
 
-// type responseType = {
 //   response: string;
 //   user_id: number;
 //   type: string;
@@ -22,7 +21,6 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-// forget password page
 export const AddCategory = (): ReactElement => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();

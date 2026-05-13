@@ -42,6 +42,9 @@ const Login = (): ReactElement => {
         method: "post",
         data,
       });
+
+      console.log(res);
+
       if (res?.data?.response === "success") {
         login(
           {
@@ -56,7 +59,7 @@ const Login = (): ReactElement => {
         toast("Successfully login");
         if (res?.data?.type === "admin") navigate("/admin/home");
         else navigate("/vendor/home");
-      } else toast(res?.data?.error);
+      } else toast("Error " + res.data.error || res?.data?.error[0]);
     } catch (error) {
       toast(error.message);
     }

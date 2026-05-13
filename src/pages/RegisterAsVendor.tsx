@@ -25,7 +25,7 @@ const schema = z
       error: (issue) =>
         issue.code === "invalid_type" ? "Enter Phone number properly" : "",
     }),
-    category: z.string(),
+    categoryArray: z.array(string()).nonempty({ error: "Can no empty" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -43,6 +43,7 @@ const RegisterASVendor = (): ReactElement => {
     });
 
   const onSubmit: SubmitHandler<formSchema> = async (data: formSchema) => {
+    Object.assign(data, { category: data.categoryArray.toString() });
     // console.log(data);
     try {
       const res = await instance({
@@ -301,18 +302,19 @@ const RegisterASVendor = (): ReactElement => {
                             <select
                               className="form-control"
                               id="category"
-                              {...register("category")}
+                              multiple
+                              {...register("categoryArray")}
                             >
                               <option value="">All category</option>
                               <option value="179">Software Services 11</option>
-                              <option value="130">Computers1</option>
-                              <option value="91">Floppy Disk</option>
-                              <option value="93">headphone</option>
+                              <option value="230">Office Supplies</option>
+                              <option value="216">Gaming</option>
+                              <option value="174">Hardware assets</option>
                             </select>
-                            {(formState.errors.category ||
-                              getFieldState("category").invalid) && (
+                            {(formState.errors.categoryArray ||
+                              getFieldState("categoryArray").invalid) && (
                               <p className="text-danger">
-                                {formState.errors?.category?.message ||
+                                {formState.errors?.categoryArray?.message ||
                                   "Select Valid category"}
                               </p>
                             )}

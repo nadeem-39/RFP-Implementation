@@ -147,7 +147,11 @@ export const AdminCategories = () => {
                         role="status"
                         aria-live="polite"
                       >
-                        Showing 5 of {allCategories?.length}
+                        Showing {(currPage - 1) * 5 + 1} to{" "}
+                        {allCategories?.length > currPage * 5
+                          ? currPage * 5
+                          : allCategories?.length}{" "}
+                        of {allCategories?.length}
                       </div>
                     </div>
                     <div className="col-sm-12 col-md-7 dataTables_wrapper ">

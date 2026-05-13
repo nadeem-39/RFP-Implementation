@@ -69,6 +69,25 @@ export const VendorList = () => {
     }
   }
 
+  async function rejectVendor(user_id) {
+    try {
+      const res = await instance({
+        url: "/approveVendor",
+        method: "post",
+        data: {
+          user_id: user_id,
+          status: "Rejected",
+        },
+      });
+      if (res?.data?.response === "success") {
+        queryClient.invalidateQueries({ queryKey: ["admin-vendors"] });
+        toast("Successfully Rejected vendor");
+      } else toast(res?.data?.response);
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+
   // console.log(data);
   if (!currVendors)
     return (
@@ -125,6 +144,7 @@ export const VendorList = () => {
                           <th>Contact</th>
                           <th>Status</th>
                           <th>Action</th>
+                          <th>Action</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -142,7 +162,7 @@ export const VendorList = () => {
                               </span>
                             </td>
                             <td>
-                              {vendor.status !== "Approved" && (
+                              {vendor.status === "Pending" && (
                                 <button
                                   className="text-success btn btn-none"
                                   onClick={() => {
@@ -150,6 +170,18 @@ export const VendorList = () => {
                                   }}
                                 >
                                   Approved
+                                </button>
+                              )}
+                            </td>
+                            <td>
+                              {vendor.status === "Pending" && (
+                                <button
+                                  className="text-success btn btn-none"
+                                  onClick={() => {
+                                    rejectVendor(vendor.user_id);
+                                  }}
+                                >
+                                  Reject
                                 </button>
                               )}
                             </td>
@@ -167,7 +199,11 @@ export const VendorList = () => {
                         role="status"
                         aria-live="polite"
                       >
-                        Showing 5 of {allVendors?.length}
+                        Showing {(currPage - 1) * 5 + 1} to{" "}
+                        {allVendors?.length > currPage * 5
+                          ? currPage * 5
+                          : allVendors?.length}{" "}
+                        of {allVendors?.length}
                       </div>
                     </div>
                     <div className="col-sm-12 col-md-7 dataTables_wrapper ">

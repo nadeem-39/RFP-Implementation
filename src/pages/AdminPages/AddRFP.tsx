@@ -7,12 +7,9 @@ import type { SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useAuthStore } from "../../lib/authStore";
 
 const schema = z.object({
-  user_id: z.number({
-    error: (issue) =>
-      issue.code === "invalid_type" ? "Enter user Id properly" : "",
-  }),
   item_name: z.string().min(3, "Enter minimum 3 characters"),
   rfp_no: z.string().nonempty({ error: "Can not be empty" }),
   quantity: z.number({
@@ -48,6 +45,7 @@ export const AddRFP = (): ReactElement => {
   const [allVendors, setAllVendors] = useState<vendor[]>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { user_id } = useAuthStore((s) => s.user);
   const { register, handleSubmit, formState, getFieldState } =
     useForm<formSchema>({
       resolver: zodResolver(schema),
@@ -83,6 +81,7 @@ export const AddRFP = (): ReactElement => {
   const onSubmit: SubmitHandler<formSchema> = async (data: formSchema) => {
     Object.assign(data, { categories: localStorage.getItem("category") });
     Object.assign(data, { vendors: data.vendorsArray.toString() });
+    Object.assign(data, { user_id: user_id });
 
     console.log(data);
     try {
@@ -128,7 +127,7 @@ export const AddRFP = (): ReactElement => {
                     <div className="col-12">
                       <div className="text-primary p-4">
                         <h5 className="text-primary">Welcome to RFP System!</h5>
-                        <p>Regsiter as Vendor</p>
+                        <p>Add RFP</p>
                       </div>
                     </div>
                   </div>
@@ -142,29 +141,8 @@ export const AddRFP = (): ReactElement => {
                       <div className="row">
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="user_id">User ID*</label>
-                            <input
-                              type="number"
-                              className="form-control"
-                              id="user_id"
-                              {...register("user_id", {
-                                valueAsNumber: true,
-                              })}
-                              placeholder="Enter user id"
-                            />
-                            {(formState.errors.user_id ||
-                              getFieldState("user_id").invalid) && (
-                              <p className="text-danger">
-                                {formState.errors?.user_id?.message ||
-                                  "Enter Valid User_id"}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div className="col-md-12 col-lg-6 col-xl-6">
-                          <div className="form-group">
                             <label htmlFor="item_name">
-                              Item Name<em>*</em>
+                              Item Name<em>* (Required)</em>
                             </label>
                             <input
                               type="text"
@@ -185,7 +163,7 @@ export const AddRFP = (): ReactElement => {
                         <div className="col-md-12">
                           <div className="form-group">
                             <label htmlFor="item_description">
-                              Item Description*
+                              Item Description<em>* (Required)</em>
                             </label>
                             <input
                               type="text"
@@ -205,7 +183,9 @@ export const AddRFP = (): ReactElement => {
                         </div>
                         <div className="col-md-12">
                           <div className="form-group">
-                            <label htmlFor="rfp_no">RFP No.*</label>
+                            <label htmlFor="rfp_no">
+                              RFP No.<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -224,7 +204,9 @@ export const AddRFP = (): ReactElement => {
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="quantity">Quantity*</label>
+                            <label htmlFor="quantity">
+                              Quantity<em>* (Required)</em>
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -246,7 +228,9 @@ export const AddRFP = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="last_date">Last Date*</label>
+                            <label htmlFor="last_date">
+                              Last Date<em>* (Required)</em>
+                            </label>
                             <input
                               type="date"
                               className="form-control"
@@ -266,7 +250,7 @@ export const AddRFP = (): ReactElement => {
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
                             <label htmlFor="minimum_price">
-                              Minimum Price*
+                              Minimum Price<em>* (Required)</em>
                             </label>
                             <input
                               type="number"
@@ -289,7 +273,7 @@ export const AddRFP = (): ReactElement => {
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
                             <label htmlFor="maximum_price">
-                              Maximum Price*
+                              Maximum Price<em>* (Required)</em>
                             </label>
                             <input
                               type="number"
@@ -311,7 +295,9 @@ export const AddRFP = (): ReactElement => {
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="vendors">Vendors*</label>
+                            <label htmlFor="vendors">
+                              Vendors<em>* (Required)</em>
+                            </label>
                             <select
                               className="form-control"
                               id="vendors"
@@ -340,7 +326,7 @@ export const AddRFP = (): ReactElement => {
                             className="btn btn-primary btn-block waves-effect waves-light"
                             type="submit"
                           >
-                            Register
+                            {formState.isSubmitting ? "Adding" : "Add"}
                           </button>
                         </div>
                       </div>

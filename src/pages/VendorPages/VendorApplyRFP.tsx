@@ -41,21 +41,21 @@ export const VendorApplyRFP = (): ReactElement => {
       });
 
       if (res?.data?.response === "success") {
-        toast("Successfully Applied");
+        toast.success("Successfully Applied");
         queryClient.invalidateQueries({ queryKey: ["vendor-rfps"] });
         navigate("/vendor/rfps-list");
       } else
-        toast(
+        toast.error(
           "Error " + res?.data?.message ||
             res?.data?.error ||
             res?.data?.error[0],
         );
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
-  console.log("rfps" + rfp_id);
+  //   console.log("rfps" + rfp_id);
 
   return (
     <>
@@ -90,7 +90,9 @@ export const VendorApplyRFP = (): ReactElement => {
                       <div className="row">
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="firstname">Item Price*</label>
+                            <label htmlFor="firstname">
+                              Item Price<em>* (Required)</em>
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -111,7 +113,9 @@ export const VendorApplyRFP = (): ReactElement => {
                         </div>
                         <div className="col-md-12">
                           <div className="form-group">
-                            <label htmlFor="total_cost">Total Cost*</label>
+                            <label htmlFor="total_cost">
+                              Total Cost<em>* (Required)</em>
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -136,7 +140,7 @@ export const VendorApplyRFP = (): ReactElement => {
                             className="btn btn-primary btn-block waves-effect waves-light"
                             type="submit"
                           >
-                            Register
+                            {formState.isSubmitting ? "Applying" : "Apply"}
                           </button>
                         </div>
                         <div className="p-2 mt-3">

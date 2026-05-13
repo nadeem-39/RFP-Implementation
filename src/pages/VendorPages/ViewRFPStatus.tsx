@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import instance from "../../lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { useParams } from "react-router-dom";
+
+import { useNavigate, useParams } from "react-router-dom";
 import { useAuthStore } from "../../lib/authStore";
 
 type rfp = {
@@ -30,6 +29,7 @@ export const ViewRFPStatus = () => {
   const [currRFP, setCurrRFP] = useState<rfp>();
   const { rfp_id } = useParams();
   const { user_id } = useAuthStore((s) => s.user);
+  const navigate = useNavigate();
   const { data } = useQuery({
     queryFn: async () =>
       await instance({
@@ -40,6 +40,9 @@ export const ViewRFPStatus = () => {
   });
 
   useEffect(() => {
+    if (data?.data?.error) {
+      navigate("/login");
+    }
     if (data) {
       if (data?.data?.rfps)
         setCurrRFP(data?.data?.rfps.find((e: rfp) => `${e.rfp_id}` === rfp_id));

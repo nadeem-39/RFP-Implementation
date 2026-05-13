@@ -60,7 +60,8 @@ export const VendorRFps = () => {
   useEffect(() => {
     if (data?.data?.error) {
       setCurrRFPs(null);
-      toast("Error " + data?.data?.error);
+      toast.error("Error " + data?.data?.error);
+      navigate("/login");
       return;
     }
     console.log(data);

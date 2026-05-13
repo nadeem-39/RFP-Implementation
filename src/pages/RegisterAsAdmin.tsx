@@ -12,7 +12,7 @@ const schema = z
     firstname: z.string().min(3, "Enter minimum 3 characters"),
     lastname: z.string().min(3, "Enter minimum 3 characters"),
     email: z.string().email(),
-    password: z.string().min(8, "Enter minimum 8 digit password"),
+    password: z.string().min(4, "Enter minimum 4 digit password"),
     confirmPassword: z.string(),
 
     mobile: z.number({
@@ -21,7 +21,7 @@ const schema = z
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Password does not match",
     path: ["confirmPassword"],
   });
 
@@ -45,10 +45,10 @@ const RegisterAsAdmin = (): ReactElement => {
 
       if (res?.data?.response === "success") {
         navigate("/login");
-        toast("Successfully registered");
-      } else toast(res?.data?.error[0]);
+        toast.success("Successfully registered");
+      } else toast.error(res?.data?.error[0]);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -83,7 +83,9 @@ const RegisterAsAdmin = (): ReactElement => {
                       <div className="row">
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="firstname">First name*</label>
+                            <label htmlFor="firstname">
+                              First name<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -103,7 +105,7 @@ const RegisterAsAdmin = (): ReactElement => {
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
                             <label htmlFor="lastname">
-                              Last Name<em>*</em>
+                              Last Name<em>* (Required)</em>
                             </label>
                             <input
                               type="text"
@@ -123,7 +125,9 @@ const RegisterAsAdmin = (): ReactElement => {
                         </div>
                         <div className="col-md-12">
                           <div className="form-group">
-                            <label htmlFor="email">Email*</label>
+                            <label htmlFor="email">
+                              Email<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -143,7 +147,9 @@ const RegisterAsAdmin = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="password">Password*</label>
+                            <label htmlFor="password">
+                              Password<em>* (Required)</em>
+                            </label>
                             <input
                               type="password"
                               className="form-control"
@@ -162,7 +168,9 @@ const RegisterAsAdmin = (): ReactElement => {
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="password">Confirm Password*</label>
+                            <label htmlFor="password">
+                              Confirm Password<em>* (Required)</em>
+                            </label>
                             <input
                               type="password"
                               className="form-control"
@@ -182,7 +190,9 @@ const RegisterAsAdmin = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="revenue">Phone No*</label>
+                            <label htmlFor="revenue">
+                              Phone No<em>* (Required)</em>
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -196,7 +206,7 @@ const RegisterAsAdmin = (): ReactElement => {
                               getFieldState("mobile").invalid) && (
                               <p className="text-danger">
                                 {formState.errors?.mobile?.message ||
-                                  "Enter Valid mobile"}
+                                  "Enter Valid mobile number"}
                               </p>
                             )}
                           </div>
@@ -204,10 +214,10 @@ const RegisterAsAdmin = (): ReactElement => {
 
                         <div className="p-2 mt-3">
                           <button
-                            className="btn btn-primary btn-block waves-effect waves-light"
+                            className="btn btn-primary btn-block waves-effect waves-light "
                             type="submit"
                           >
-                            Register
+                            {formState.isSubmitting ? "Submitting" : "Register"}
                           </button>
                         </div>
                       </div>

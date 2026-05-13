@@ -56,12 +56,12 @@ const Login = (): ReactElement => {
           res?.data?.token,
         );
 
-        toast("Successfully login");
+        toast.success("Successfully login");
         if (res?.data?.type === "admin") navigate("/admin/home");
         else navigate("/vendor/home");
-      } else toast("Error " + res.data.error || res?.data?.error[0]);
+      } else toast.error("Error " + res.data.error || res?.data?.error[0]);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -147,7 +147,7 @@ const Login = (): ReactElement => {
                           className="btn btn-primary btn-block waves-effect waves-light"
                           type="submit"
                         >
-                          Log In
+                          {formState.isSubmitting ? "Loging In" : "Log In"}
                         </button>
                       </div>
 

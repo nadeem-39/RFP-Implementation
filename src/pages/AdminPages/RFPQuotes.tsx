@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import instance from "../../lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -36,6 +36,7 @@ export const RFPQuotes = () => {
   const [rfp_data, setRfpData] = useState<rfp>();
   const [currPage, setCurrPage] = useState<number>(1);
   const { rfp_id } = useParams();
+  const navigate = useNavigate();
   const { data } = useQuery({
     queryFn: async () =>
       await instance({
@@ -54,7 +55,7 @@ export const RFPQuotes = () => {
       setRfpData(rfp_details?.data?.rfp);
       console.log(rfp_details);
     } catch (e) {
-      toast("Error " + e.message);
+      toast.error("Error " + e.message);
     }
   }
 
@@ -73,8 +74,11 @@ export const RFPQuotes = () => {
   }
 
   useEffect(() => {
-    if (data?.data?.error) {
+    if (data?.data?.error === "Authorization failled") {
       setCurrRFP_quotes(null);
+      navigate("/login");
+      //   console.log("I am quotes navigate function" + data.data.error);
+
       return;
     }
     if (data) {

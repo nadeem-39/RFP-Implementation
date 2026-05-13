@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import instance from "../../lib/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,6 +19,7 @@ export const VendorList = () => {
   const [currVendors, setCurrVendors] = useState<vendor[]>();
   const [currPage, setCurrPage] = useState<number>(1);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { data } = useQuery({
     queryFn: async () =>
       await instance({
@@ -41,7 +42,8 @@ export const VendorList = () => {
   useEffect(() => {
     if (data?.data?.error) {
       setCurrVendors(null);
-      toast("Error " + data?.data?.error);
+      toast.error("Error " + data?.data?.error);
+      navigate("/login");
       return;
     }
     if (data) {
@@ -62,10 +64,10 @@ export const VendorList = () => {
       });
       if (res?.data?.response === "success") {
         queryClient.invalidateQueries({ queryKey: ["admin-vendors"] });
-        toast("Successfully approved vendor");
-      } else toast(res?.data?.response);
+        toast.success("Successfully approved vendor");
+      } else toast.error(res?.data?.response);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   }
 
@@ -81,10 +83,10 @@ export const VendorList = () => {
       });
       if (res?.data?.response === "success") {
         queryClient.invalidateQueries({ queryKey: ["admin-vendors"] });
-        toast("Successfully Rejected vendor");
-      } else toast(res?.data?.response);
+        toast.success("Successfully Rejected vendor");
+      } else toast.error(res?.data?.response);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   }
 
@@ -139,18 +141,20 @@ export const VendorList = () => {
                       <thead>
                         <tr>
                           <th>Sr no.</th>
+                          <th>Vendor Id</th>
                           <th>Name</th>
                           <th>Email</th>
                           <th>Contact</th>
                           <th>Status</th>
-                          <th>Action</th>
-                          <th>Action</th>
+                          <th>Approve</th>
+                          <th>Reject</th>
                         </tr>
                       </thead>
                       <tbody>
                         {currVendors?.map((vendor, idx) => (
                           <tr key={idx}>
-                            <th scope="row">{vendor.user_id}</th>
+                            <th scope="row">{(currPage - 1) * 5 + idx + 1}</th>
+                            <td>{vendor.user_id}</td>
                             <td>{vendor.name}</td>
                             <td>{vendor.email}</td>
                             <td>{vendor.mobile}</td>
@@ -167,9 +171,10 @@ export const VendorList = () => {
                                   className="text-success btn btn-none"
                                   onClick={() => {
                                     approveVendor(vendor.user_id);
+                                    toast.success("Approving Vendor");
                                   }}
                                 >
-                                  Approved
+                                  Approve
                                 </button>
                               )}
                             </td>
@@ -179,6 +184,7 @@ export const VendorList = () => {
                                   className="text-success btn btn-none"
                                   onClick={() => {
                                     rejectVendor(vendor.user_id);
+                                    toast.success("Rejecting Vendor");
                                   }}
                                 >
                                   Reject

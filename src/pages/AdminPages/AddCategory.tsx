@@ -81,7 +81,9 @@ export const AddCategory = (): ReactElement => {
                       onSubmit={handleSubmit(onSubmit)}
                     >
                       <div className="form-group">
-                        <label htmlFor="username">Category Name</label>
+                        <label htmlFor="username">
+                          Category Name<em>* (Required)</em>
+                        </label>
 
                         <input
                           id="name"
@@ -103,7 +105,7 @@ export const AddCategory = (): ReactElement => {
                           className="btn btn-primary btn-block waves-effect waves-light"
                           type="submit"
                         >
-                          Submit
+                          {formState.isSubmitting ? "Adding" : "Add"}
                         </button>
                       </div>
                     </form>

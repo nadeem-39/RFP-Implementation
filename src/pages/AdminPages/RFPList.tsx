@@ -49,7 +49,8 @@ export const RFPList = () => {
   useEffect(() => {
     if (data?.data?.error) {
       setCurrRFP(null);
-      toast("Error " + data?.data?.error);
+      toast.error("Error " + data?.data?.error);
+      navigate("/login");
       return;
     }
 
@@ -58,6 +59,26 @@ export const RFPList = () => {
       pagination(currPage, data?.data?.rfps);
     }
   }, [data]);
+
+  function filterByname(item_name) {
+    if (!item_name) {
+      pagination(currPage, allRFP);
+      return;
+    }
+    setCurrRFP(
+      allRFP?.filter((e) =>
+        e?.item_name.toLowerCase()?.includes(item_name.toLowerCase()),
+      ),
+    );
+  }
+
+  function filterByStatus(value) {
+    if (value === "open") {
+      setCurrRFP(allRFP?.filter((e) => e.status === "open"));
+    } else if (value === "closed") {
+      setCurrRFP(allRFP?.filter((e) => e.status === "closed"));
+    } else pagination(currPage, allRFP);
+  }
 
   // close RFP
   async function closeRfp(rfp_id: number) {
@@ -68,10 +89,10 @@ export const RFPList = () => {
       });
       if (res?.data?.response === "success") {
         queryClient.invalidateQueries({ queryKey: ["admin-RFP"] });
-        toast("Successfully Closed RFP");
-      } else toast("Error " + res.data.error);
+        toast.success("Successfully Closed RFP");
+      } else toast.error("Error " + res.data.error);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   }
 
@@ -106,7 +127,40 @@ export const RFPList = () => {
           {/* <!-- end page title --> */}
 
           {/* <!-- end row --> */}
-
+          <div className="row">
+            <div className="col-lg-4 col-md-4">
+              <label className="sr-only" htmlFor="inlineFormSearchl2">
+                Search
+              </label>
+              <div className="input-group mb-2 mr-sm-3">
+                <div className="input-group-prepend">
+                  <div className="input-group-text">
+                    <i className="mdi mdi-magnify"></i>
+                  </div>
+                </div>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="inlineFormSearchl2"
+                  placeholder="Search"
+                  onChange={(e) => filterByname(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="col-lg-4 col-md-4">
+              <select
+                className="form-control"
+                id="userstatus"
+                name="userstatus"
+                onChange={(e) => filterByStatus(e.target.value)}
+              >
+                <option value="">Select Status</option>
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+                <option value="both">Both</option>
+              </select>
+            </div>
+          </div>
           <div className="row">
             <div className="col-lg-12">
               <div className="card">
@@ -166,6 +220,7 @@ export const RFPList = () => {
                                   className="text-success btn btn-none"
                                   onClick={() => {
                                     closeRfp(rfp.rfp_id);
+                                    toast.success("Closing RFP");
                                   }}
                                 >
                                   close

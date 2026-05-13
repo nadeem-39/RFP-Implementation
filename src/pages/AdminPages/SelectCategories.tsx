@@ -36,7 +36,7 @@ export const SelectCategories = () => {
 
       navigate("/admin/add-rfp");
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -52,7 +52,8 @@ export const SelectCategories = () => {
   useEffect(() => {
     if (data?.data?.error) {
       setCurrCategories(null);
-      toast("Error " + data?.data?.error);
+      toast.error("Error " + data?.data?.error);
+      navigate("/login");
       return;
     }
     if (data) {

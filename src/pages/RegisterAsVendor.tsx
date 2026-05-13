@@ -12,7 +12,7 @@ const schema = z
     firstname: z.string().min(3, "Enter minimum 3 characters"),
     lastname: z.string().min(3, "Enter minimum 3 characters"),
     email: z.string().email(),
-    password: z.string().min(8, "Enter minimum 8 digit password"),
+    password: z.string().min(4, "Enter minimum 4 digit password"),
     confirmPassword: z.string(),
     revenue: z.string().nonempty({ message: "Enter Revenue" }),
     no_of_employees: z.number({
@@ -25,10 +25,10 @@ const schema = z
       error: (issue) =>
         issue.code === "invalid_type" ? "Enter Phone number properly" : "",
     }),
-    categoryArray: z.array(string()).nonempty({ error: "Can no empty" }),
+    categoryArray: z.array(string()).nonempty({ error: "Can not be empty" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
+    message: "Password does not match",
     path: ["confirmPassword"],
   });
 
@@ -56,10 +56,10 @@ const RegisterASVendor = (): ReactElement => {
 
       if (res?.data?.response === "success") {
         navigate("/login");
-        toast("Successfully registered");
-      } else toast(res?.data?.error[0]);
+        toast.success("Successfully registered");
+      } else toast.error(res?.data?.error[0]);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -94,7 +94,9 @@ const RegisterASVendor = (): ReactElement => {
                       <div className="row">
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="firstname">First name*</label>
+                            <label htmlFor="firstname">
+                              First name<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -114,7 +116,7 @@ const RegisterASVendor = (): ReactElement => {
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
                             <label htmlFor="lastname">
-                              Last Name<em>*</em>
+                              Last Name<em>* (Required)</em>
                             </label>
                             <input
                               type="text"
@@ -134,7 +136,9 @@ const RegisterASVendor = (): ReactElement => {
                         </div>
                         <div className="col-md-12">
                           <div className="form-group">
-                            <label htmlFor="email">Email*</label>
+                            <label htmlFor="email">
+                              Email<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -154,7 +158,9 @@ const RegisterASVendor = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="password">Password*</label>
+                            <label htmlFor="password">
+                              Password<em>* (Required)</em>
+                            </label>
                             <input
                               type="password"
                               className="form-control"
@@ -173,7 +179,9 @@ const RegisterASVendor = (): ReactElement => {
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="password">Confirm Password*</label>
+                            <label htmlFor="password">
+                              Confirm Password<em>* (Required)</em>
+                            </label>
                             <input
                               type="password"
                               className="form-control"
@@ -194,7 +202,8 @@ const RegisterASVendor = (): ReactElement => {
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
                             <label htmlFor="revenue">
-                              Revenue (Last 3 Years in Lacks)*
+                              Revenue (Last 3 Years in Lacks)
+                              <em>* (Required)</em>
                             </label>
                             <input
                               type="text"
@@ -207,7 +216,7 @@ const RegisterASVendor = (): ReactElement => {
                               getFieldState("revenue").invalid) && (
                               <p className="text-danger">
                                 {formState.errors?.revenue?.message ||
-                                  "Enter Valid revenue"}
+                                  "Enter Valid Revenue"}
                               </p>
                             )}
                           </div>
@@ -215,7 +224,7 @@ const RegisterASVendor = (): ReactElement => {
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
                             <label htmlFor="no_of_employees">
-                              No of Employees*
+                              No of Employees<em>* (Required)</em>
                             </label>
                             <input
                               type="number"
@@ -230,7 +239,7 @@ const RegisterASVendor = (): ReactElement => {
                               getFieldState("no_of_employees").invalid) && (
                               <p className="text-danger">
                                 {formState.errors?.no_of_employees?.message ||
-                                  "Enter Valid no_of_employees"}
+                                  "Enter Valid No of Employees"}
                               </p>
                             )}
                           </div>
@@ -238,7 +247,9 @@ const RegisterASVendor = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="gst_no">GST No*</label>
+                            <label htmlFor="gst_no">
+                              GST No<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -250,14 +261,16 @@ const RegisterASVendor = (): ReactElement => {
                               getFieldState("gst_no").invalid) && (
                               <p className="text-danger">
                                 {formState.errors?.gst_no?.message ||
-                                  "Enter Valid gst_no"}
+                                  "Enter Valid GSt number"}
                               </p>
                             )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="pancard_no">PAN No*</label>
+                            <label htmlFor="pancard_no">
+                              PAN No<em>* (Required)</em>
+                            </label>
                             <input
                               type="text"
                               className="form-control"
@@ -269,7 +282,7 @@ const RegisterASVendor = (): ReactElement => {
                               getFieldState("pancard_no").invalid) && (
                               <p className="text-danger">
                                 {formState.errors?.pancard_no?.message ||
-                                  "Enter Valid pancard_no"}
+                                  "Enter Valid pancard number"}
                               </p>
                             )}
                           </div>
@@ -277,7 +290,9 @@ const RegisterASVendor = (): ReactElement => {
 
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="revenue">Phone No*</label>
+                            <label htmlFor="revenue">
+                              Phone No<em>* (Required)</em>
+                            </label>
                             <input
                               type="number"
                               className="form-control"
@@ -291,14 +306,16 @@ const RegisterASVendor = (): ReactElement => {
                               getFieldState("mobile").invalid) && (
                               <p className="text-danger">
                                 {formState.errors?.mobile?.message ||
-                                  "Enter Valid mobile"}
+                                  "Enter Valid mobile number"}
                               </p>
                             )}
                           </div>
                         </div>
                         <div className="col-md-12 col-lg-6 col-xl-6">
                           <div className="form-group">
-                            <label htmlFor="category">category*</label>
+                            <label htmlFor="category">
+                              Category<em>* (Required)</em>
+                            </label>
                             <select
                               className="form-control"
                               id="category"
@@ -326,7 +343,7 @@ const RegisterASVendor = (): ReactElement => {
                             className="btn btn-primary btn-block waves-effect waves-light"
                             type="submit"
                           >
-                            Register
+                            {formState.isSubmitting ? "Submitting" : "Register"}
                           </button>
                         </div>
                       </div>

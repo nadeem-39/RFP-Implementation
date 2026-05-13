@@ -40,11 +40,11 @@ const ForgetPass = (): ReactElement => {
         data,
       });
       if (res?.data?.response === "success") {
-        toast("Successfully sent OTP to registered mail Id");
+        toast.success("Successfully sent OTP to registered mail Id");
         navigate("/resetPassword");
-      } else toast(res?.data?.error);
+      } else toast.error(res?.data?.error);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -99,7 +99,7 @@ const ForgetPass = (): ReactElement => {
                           className="btn btn-primary btn-block waves-effect waves-light"
                           type="submit"
                         >
-                          Get OTP
+                          {formState.isSubmitting ? "Sending Otp" : "Get OTP"}
                         </button>
                       </div>
                     </form>

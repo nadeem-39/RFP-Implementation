@@ -43,10 +43,10 @@ export const ResetPassword = (): ReactElement => {
 
       if (res?.data?.response === "success") {
         navigate("/login");
-        toast("Successfully reset password");
-      } else toast(res?.data?.error[0]);
+        toast.success("Successfully reset password");
+      } else toast.error(res?.data?.error[0]);
     } catch (error) {
-      toast(error.message);
+      toast.error(error.message);
     }
   };
 
@@ -165,7 +165,7 @@ export const ResetPassword = (): ReactElement => {
                             className="btn btn-primary btn-block waves-effect waves-light"
                             type="submit"
                           >
-                            Register
+                            {formState.isSubmitting ? "Submitting" : "Submit"}
                           </button>
                         </div>
                       </div>
